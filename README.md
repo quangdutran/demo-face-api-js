@@ -1,3 +1,9 @@
+Added filter
+# Create black line over eyes using face landmark coordinates from face-api.js
+
+Like this:
+<a href="url"><img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/print-wall-parasite-korea-movie-poster-lestari-tedjo.jpg" align="left" height="352" width="250" ></a>
+
 # Face Detection On The Web With face-api.js
 
 Code demonstrating how to use [face-api.js](https://github.com/justadudewhohacks/face-api.js) to crop a picture and to place emojis on any eyes detected in a photo.
