@@ -1,8 +1,8 @@
-Added filter
 # Create black line over eyes using face landmark coordinates from face-api.js
 
 Like this:
-<a href="url"><img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/print-wall-parasite-korea-movie-poster-lestari-tedjo.jpg" align="left" height="352" width="250" ></a>
+<p><img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/print-wall-parasite-korea-movie-poster-lestari-tedjo.jpg" align="left" height="352" width="250" ></p>
+
 
 # Face Detection On The Web With face-api.js
 
