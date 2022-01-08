@@ -4,6 +4,6 @@
 - FabricJS: https://github.com/fabricjs/fabric.js
 
 
-Inspriration:
+Inspiration:
 <p><img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/print-wall-parasite-korea-movie-poster-lestari-tedjo.jpg" align="left" height="352" width="250" ></p>
 
