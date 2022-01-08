@@ -1,5 +1,7 @@
 const container = document.querySelector('#container'); 
 const fileInput = document.querySelector('#file-input');
+let eyes = [];
+let canva = {};
 
 async function init() {
     await faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
@@ -8,19 +10,25 @@ async function init() {
 
 init()
 
+document.getElementById("removeLine").addEventListener("click", function() {
+  if (canva) {
+    canva.remove(canva.getActiveObject());
+  }
+});
+
 fileInput.addEventListener('change', async (e) => {
     const file = fileInput.files[0];
     const image = await faceapi.bufferToImage(file)
-    container.innerHTML=''
+    
+    canva = new fabric.Canvas('canvas', {
+      width: image.naturalWidth,
+      height: image.naturalHeight
+    });
 
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-
-    context.canvas.height = image.naturalHeight;
-    context.canvas.width = image.naturalWidth;
-    context.drawImage(image, 0, 0);
-
-    container.appendChild(canvas)
+    new fabric.Image.fromObject(image, (i) => {
+      canva.backgroundImage = i;
+      canva.renderAll();
+    })
 
     const faces = await faceapi.detectAllFaces(image).withFaceLandmarks();
 
@@ -29,31 +37,42 @@ fileInput.addEventListener('change', async (e) => {
           eyeLeft: face.landmarks.positions.slice(36, 42),
           eyeRight: face.landmarks.positions.slice(42, 48)
         };
+        eyes.push(features);
 
         const leftEye = getBoxFromPoints(features.eyeLeft);
         const rightEye = getBoxFromPoints(features.eyeRight);
-        
-        const height = Math.max(leftEye.height, rightEye.height) * 2;
+        const height = Math.max(leftEye.height, rightEye.height) * 2.5;
         const length = getLengthBetweenPoints(leftEye.center, rightEye.center);
         const addedSide = length / 2;
-        const leftPointX = leftEye.center.x - addedSide;
-        const leftPoint = getPointInTheLine(leftPointX, leftEye.center, rightEye.center);
-        const rightPointX = rightEye.center.x + addedSide;
-        const rightPoint = getPointInTheLine(rightPointX, leftEye.center, rightEye.center);       
+        const leftEyeTopPoint = {
+          x: leftEye.center.x,
+          y: leftEye.top - height / 3
+        };
+        const rightEyeTopPoint = {
+          x: rightEye.center.x,
+          y: rightEye.top - height / 3
+        }
 
-        context.strokeStyle = 'black';
-        context.lineWidth = height;
-
-        context.beginPath();
-        context.moveTo(leftPoint.x, leftPoint.y);
-        context.lineTo(rightPoint.x, rightPoint.y);
-        context.stroke();
-
+        const leftPointX = leftEye.left - addedSide;
+        const leftPoint = getPointInTheLine(leftPointX, leftEyeTopPoint , rightEyeTopPoint);
+        const rightPointX = rightEye.right + addedSide / 2;
+        const rightPoint = getPointInTheLine(rightPointX, leftEyeTopPoint , rightEyeTopPoint);      
+        
+        let line = new fabric.Line([leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y], {
+          stroke: 'black',
+          strokeWidth: height
+        });
+        
+        canva.add(line);
+        eyes.push(line);
       }
-
+      canva.renderAll();
 })
 
+
+
 //Given x coordinate, get point (x,y) in the line from firstPoint to secondPoint
+//Find the 2-variable simple equation, put x in and find y
 function getPointInTheLine(x, firstPoint, secondPoint) {
   const xDivision = secondPoint.x - firstPoint.x;
   const yDivision = secondPoint.y - firstPoint.y;
